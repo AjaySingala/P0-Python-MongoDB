@@ -20,7 +20,11 @@ Structure of 'restaurants' collection:
   "restaurant_id": "30075445"
 }
 
-Tasks
+Tasks:
+Import the restaurants data into MongoDB.
+	i) direct import (no code)			- databaseA
+	ii) using Python - PyMongo driver	- databaseB
+
 1. Write a MongoDB query to display all the documents in the collection restaurants.
 
 2. Write a MongoDB query to display the fields restaurant_id, name, borough and cuisine for all the documents in the collection restaurant.
