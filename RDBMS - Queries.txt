@@ -95,12 +95,21 @@ Display data from the following tables:
 	
 OrderId, OrderDate, CustomerId, CustomerName, ProductId, ProductName, Quantity, ShipperId, ShipperName
 
-
-
-
-
-
-
-
-
-
+SELECT 
+	o.OrderId, 
+	o.OrderDate, 
+	o.CustomerId, 
+	c.CustomerName, 
+	od.ProductId, 
+	p.ProductName, 
+	od.Quantity, 
+	s.ShipperId, 
+	s.ShipperName,
+	p.SupplierId, 
+	su.SupplierName
+FROM Orders o
+INNER JOIN OrderDetails od ON o.OrderId = od.OrderId
+INNER JOIN Customers c ON o.CustomerId = c.customerId
+INNER JOIN Products p ON od.ProductId = p.ProductId
+INNER JOIN Shippers s ON o.ShipperId = s.ShipperId
+INNER JOIN Suppliers su ON p.SupplierId = su.SupplierId
