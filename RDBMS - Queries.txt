@@ -1,0 +1,106 @@
+Queries
+	CRUD -> Create, Read, Update, Delete.
+	
+	DML: Data Manipulation Language
+		Create: INSERT
+		Read:	SELECT
+		Update:	UPDATE
+		Delete:	DELETE
+		
+	DDL: Data Definition Language
+		CREATE DATABASE
+		CREATE TABLE
+		CREATE VIEW
+		CREATE INDEX
+		CREATE PROCEDURE
+		
+		ALTER TABLE
+		ATLER PROCECURE
+		
+		TRUNCATE (delete all rows in a table)
+		
+		
+CREATE TABLE <tablename>(
+	column_1 type <constraint>,
+	column_2 type <constraint>,
+	:
+	:
+	column_n type <constraint>,
+)
+
+INSERT INTO <tablename> (column_1, column_2,...column_n)
+VALUES(value_1, value_2,...value_n)
+
+SELECT <* | column_1, column_2,...column_n> FROM <tablename>
+
+BEGIN TRANSACTION;
+
+/* Create a table called NAMES */
+CREATE TABLE NAMES(Id integer PRIMARY KEY, Name text);
+
+/* Create few records in this table */
+INSERT INTO NAMES(Id, Name) VALUES(1,'Tom');
+INSERT INTO NAMES VALUES(2,'Lucy');
+INSERT INTO NAMES VALUES(3,'Frank');
+INSERT INTO NAMES VALUES(4,'Jane');
+INSERT INTO NAMES VALUES(5,'Robert');
+COMMIT;
+
+/* Display all the records from the table */
+SELECT * FROM NAMES;
+SELECT Name FROM NAMES;
+
+# WHERE Clause.
+SELECT ... FROM ... WHERE <condition>
+
+
+ALIAS => another name / temporary name
+
+SELECT o.OrderId, o.CustomerId, c.CustomerName, o.EmployeeID, e.Firstname, e.Lastname
+FROM Orders as 
+INNER JOIN Customers as c ON o.CustomerId = c.CustomerId
+INNER JOIN Employees as e ON o.EmployeeID = e.EmployeeID
+
+UPDATE <tablename>
+SET column_1 = <new value>
+[, column_2 = <new value>, column_n = <new value>]
+WHERE <condition>
+
+INSERT INTO Customers
+VALUES (101, 'Ajay', 'Singala', 'Mumbai', 'Mumbai', '400067', 'India')
+
+UPDATE Customers
+SET Address = 'ABC Road'
+WHERE CustomerId = 101
+
+UPDATE Customers
+SET Address = 'ABC Road',
+ContactName = 'Mr. XYZ',
+CustomerName = 'John Smith'
+WHERE CustomerId = 101
+
+
+DELETE FROM <table>
+WHERE <condition>
+
+DELETE FROM Customers
+WHERE CustomerId = 101
+
+Display data from the following tables:
+	Orders
+	Customers
+	OrderDetails
+	Products
+	Shippers
+	
+OrderId, OrderDate, CustomerId, CustomerName, ProductId, ProductName, Quantity, ShipperId, ShipperName
+
+
+
+
+
+
+
+
+
+
