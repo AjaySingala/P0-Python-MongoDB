@@ -1,0 +1,63 @@
+db.collection.insert({one doc})
+db.collection.insertOne({one doc})
+db.collection.insertMany([{}, {}, {}])
+
+SIZE
+Color
+Brand
+
+Schema
+
+
+SELECT *
+FROM girlDiapers
+WHERE size = 3
+
+d1 = [{'size':1, 'color':'blue', 'brand':'abc'}, {'size':2, 'color':'green', 'brand':'xyz'}]
+d1[1]['color']
+
+UPDATE table
+SET col = new value
+WHERE 
+
+upsert?
+Update or Insert
+
+update({condition}, {$set {'attr': 'new value', ...}} {multi: true})
+updateOne({condition}, {$set {'attr': 'new value', ...}} )
+updateMany({condition}, {$set {'attr': 'new value', ...}})
+
+mongoimport
+MongoDB Database Tools
+
+"C:\Program Files\MongoDB\Server\mongodb-database-tools\bin\mongoimport" --db products --collection zipcodes --type json --file zips.json
+
+db.zipcodes.aggregate( [ { $group: { _id: "$state", totalPop: { $sum: "$pop" } } } ] )
+
+db.zipcodes.aggregate( [ { $group: { _id: "$state", totalPop: { $sum: "$pop" } } } ,{ $match: { totalPop: { $gte: 10*1000*1000 } } } ] )
+
+SELECT State, SUM(Pop) as 'TotalPop'
+FROM zipcodes
+GROUP BY State
+HAVING TotalPop >= 10*1000*1000
+
+> >= < <= ==
+gt gte lt lte eq
+
+db.zipcodes.aggregate([
+	{ $group: 
+		{ 	_id: "$state",
+			totalPop: { $sum: "$pop" } 
+		} 
+	},
+	{ $match: 
+		{ totalPop: { $gte: 10*1000*1000 } } 
+	}, 
+	{ $sort: {_id: 1} } 
+])
+
+SELECT State, SUM(Pop) as 'TotalPop'
+FROM zipcodes
+GROUP BY State
+HAVING TotalPop >= 10*1000*1000
+ORDER BY State
