@@ -1,3 +1,5 @@
+SQL: Structured Query Language
+
 Queries
 	CRUD -> Create, Read, Update, Delete.
 	
@@ -113,3 +115,41 @@ INNER JOIN Customers c ON o.CustomerId = c.customerId
 INNER JOIN Products p ON od.ProductId = p.ProductId
 INNER JOIN Shippers s ON o.ShipperId = s.ShipperId
 INNER JOIN Suppliers su ON p.SupplierId = su.SupplierId
+
+#Aggregation:
+	Grouping records
+	SUM, MAX, MIN, AVG, COUNT
+	
+SELECT od.OrderDetailID, od.OrderID, od.ProductID, p.ProductName, od.Quantity, p.Price, (od.Quantity * p.Price) AS 'Amount'
+FROM [OrderDetails] od
+INNER JOIN Products p ON od.ProductId = p.ProductID
+
+SELECT * FROM [OrderDetails]
+WHERE ProductId = 2
+OR ProductId =1
+ORDER BY ProductId, Quantity
+
+SELECT * FROM [OrderDetails]
+WHERE ProductId IN (1, 2)
+ORDER BY ProductId, Quantity
+
+SELECT od.ProductID, p.ProductName, SUM(od.Quantity) AS 'TotalQtySold', MIN(od.Quantity), MAX(od.quantity), COUNT(od.ProductId), AVG(od.Quantity)
+FROM [OrderDetails] od
+INNER JOIN Products AS p ON od.ProductId = p.ProductID
+GROUP BY od.ProductID, p.ProductName
+
+SELECT od.ProductID, p.ProductName, p.Price, SUM(od.Quantity) AS 'TotalQtySold', MIN(od.Quantity), MAX(od.quantity), COUNT(od.ProductId), AVG(od.Quantity)
+FROM [OrderDetails] od
+INNER JOIN Products AS p ON od.ProductId = p.ProductID
+-- WHERE p.Price > 100
+GROUP BY od.ProductID, p.ProductName
+ORDER BY p.ProductName
+
+
+SELECT od.ProductID, p.ProductName, p.Price, SUM(od.Quantity) AS 'TotalQtySold', MIN(od.Quantity), MAX(od.quantity), COUNT(od.ProductId), AVG(od.Quantity)
+FROM [OrderDetails] od
+INNER JOIN Products AS p ON od.ProductId = p.ProductID
+WHERE p.Price > 100
+GROUP BY od.ProductID, p.ProductName
+HAVING TotalQtySold > 100
+ORDER BY p.ProductName
