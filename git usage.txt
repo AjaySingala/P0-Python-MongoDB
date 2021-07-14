@@ -1,0 +1,31 @@
+git status
+	default branch on Github => master
+	default branch on Github => main
+	
+git branch -M main
+	switch to "main" branch
+	
+# first time:
+git init
+git remote add <url to your github repo>
+
+git remote -v
+
+git push -u origin main
+
+# after you make changes to your files
+git add <filename>
+git add .
+git status
+git commit -m "message"
+git status
+git push
+
+# existing repo
+# clone only once!!!
+git clone
+
+# to get latest changes from repo.
+git pull
+
+
