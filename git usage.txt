@@ -7,7 +7,7 @@ git branch -M main
 	
 # first time:
 git init
-git remote add <url to your github repo>
+git remote add origin <url to your github repo>
 
 git remote -v
 
