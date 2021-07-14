@@ -153,3 +153,16 @@ WHERE p.Price > 100
 GROUP BY od.ProductID, p.ProductName
 HAVING TotalQtySold > 100
 ORDER BY p.ProductName
+
+SELECT ...
+FROM...
+WHERE
+GROUP BY ...
+HAVING ...
+
+1. Join tables
+2. apply WHERE conditions
+3. extract columns provided in SELECT statement, except aggregation
+4. Apply GROUPing...
+5. apply the Aggregation (SUM, COUNT....)
+6. apply HAVING conditions
