@@ -1,0 +1,45 @@
+PyMongo
+	Driver
+	to connect to MongoDB from Python
+	install PyMongo
+	
+	sudo pip install pymongo
+	pip install pymongo
+	python -m pip install pymongo
+	python3 -m pip install pymongo
+	py -m pip install pymongo
+
+localhost:27017
+mongodb://server:port
+mongodb://username:password@server:port
+mongodb://server:port/dbname
+mongodb://username:password@server:port/dbname
+
+
+client = MongoClient('mongodb://server:port')
+client = MongoClient('mongodb://acme.mongodbserver.com:27017')
+client = MongoClient('mongodb://admin:admin@acme.mongodbserver.com:27017')
+
+client = MongoClient('mongodb://server:port/products')
+client = MongoClient('mongodb://acme.mongodbserver.com:27017/products')
+client = MongoClient('mongodb://admin:admin@acme.mongodbserver.com:27017/products')
+
+mongodb://server:27017
+mongodb://username:password@server:27017
+mongodb://myDBReader:D1fficultP%40ssw0rd@server:27017
+mongodb://username:password@server:27017/dbname
+
+<full path to mongo>\mongo "mongodb://server:27017"
+<full path to mongo>\mongo "mongodb://username:password@server:27017"
+<full path to mongo>\mongo "mongodb://username:password@server:27017/testdb"
+
+Indexing:
+	_id: unique identifier for each doc in the collection
+	every collection has an "index" based on _id.
+	not search docs based on _id.
+	will search other attributes: users collectiion: firstname, firstname + lastname, city
+	
+SELECT * FROM Users
+WHERE City = 'Mumbai'
+	create an index on "city"
+	

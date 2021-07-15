@@ -1,0 +1,9 @@
+{_id : "jane",joined : ISODate("2011-03-02"),likes : ["golf", "racquetball"]}
+{_id : "joe",joined : ISODate("2012-07-02"),likes : ["tennis", "golf", "swimming"]}
+{_id : "mary",joined : ISODate("2011-03-02"),likes : ["tennis", "racquetball"]}
+{_id : "neo",joined : ISODate("2009-04-02"),likes : ["tennis", "golf", "football"]}
+{_id : "ajay",joined : ISODate("2009-03-02"),likes : ["Formula 1", "tennis", "football"]}
+{_id : "trinity",joined : ISODate("2004-09-02"),likes : ["baseball", "golf", "american football"]}
+{_id : "morpheus",joined : ISODate("2012-01-02"),likes : ["baseball", "ice hockey", "american football"]}
+
+

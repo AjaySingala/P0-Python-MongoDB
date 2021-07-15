@@ -61,3 +61,453 @@ FROM zipcodes
 GROUP BY State
 HAVING TotalPop >= 10*1000*1000
 ORDER BY State
+
+db.zipcodes.aggregate( [
+   {$group: {_id: {state: "$state", city: "$city"}, pop: {$sum: "$pop"}}}
+] )
+
+Average:
+db.zipcodes.aggregate( [
+   {$group: {_id: {state: "$state", city: "$city"}, pop: {$sum: "$pop"}}},
+   { $group: { _id: "$_id.state", avgCityPop: { $avg: "$pop" } } }
+] )
+
+// Sort ASC.
+db.inventory.find( {$or:  [ {'size.uom': 'in'},  {'size.h': {$lt: 20}} ] } ).sort({'item': -1})
+// Sort DESC.
+db.inventory.find( {$or:  [ {'size.uom': 'in'},  {'size.h': {$lt: 20}} ] } ).sort({'item': 1})
+
+db.inventory.find({'item': 'planner', 'qty': 75}, {"item": 1, "qty": 1, "_id": 0} )
+db.inventory.find({}, {"item": 1, "qty": 1} ).limit(2)
+db.inventory.find({}, {"item": 1, "qty": 1} ).skip(2).limit(2)
+db.inventory.find({'size.uom': 'cm'})
+db.inventory.find({'size.h': {$gt: 10}})
+db.inventory.find({'size.h': {$gte: 10}}) 
+db.inventory.find({'size.h': {$gt: 10}, 'size.uom': 'cm'})
+db.inventory.find({'size.h': {$gt: 10}, 'size.uom': 'cm'}, {_id:0, 'item': 1, 'qty': 1})
+db.inventory.find({'size.uom': {$ne: 'in'}})
+
+
+db.inventory.find(
+	{$or: 
+		[
+			{'size.uom': 'cm'}, 
+			{'size.h': {$lt: 20}}
+		]
+	}
+)
+
+db.inventory.find(
+	{$or: 
+		[
+			{'size.h': {$gt: 10}}, 
+			{'size.h': {$lt: 20}}
+		]
+	}
+)
+
+db.inventory.find(
+	{$and: 
+		[
+			{'size.h': {$gt: 10}}, 
+			{'size.h': {$lt: 20}}
+		]
+	}
+)
+
+
+regex:
+	{<attr>: { $regex: /pattern/<options>}} 
+	{<attr>: { $regex: 'pattern', $options: '<options>'}} 
+	{<attr>: { $regex: /pattern/, $options: '<options>'}} 
+	
+	options:
+		i: ignore case $regex: /'john'/i => JOHN, John, john, joHn
+		s: dot (.) will include new line chars.
+		
+		
+	{name: {$regex: /acme.*corp/i}}
+	
+Return Largest and Smallest Cities by State:
+db.zipcodes.aggregate( [
+    { $group:
+       {
+         _id: { state: "$state", city: "$city" },
+         pop: { $sum: "$pop" }
+       }
+    },
+    { $sort: { pop: 1 } },
+    { $group:
+       {
+         _id : "$_id.state",
+         biggestCity:  { $last: "$_id.city" },
+         biggestPop:   { $last: "$pop" },
+         smallestCity: { $first: "$_id.city" },
+         smallestPop:  { $first: "$pop" }
+       }
+    },
+   // the following $project is optional, and
+   // modifies the output format.
+   { $project:
+     { _id: 0,
+       state: "$_id",
+       biggestCity:  { name: "$biggestCity",  pop: "$biggestPop" },
+       smallestCity: { name: "$smallestCity", pop: "$smallestPop" }
+     }
+   }
+ ] )
+
+
+Normalize and Sort Documents: 
+db.users.aggregate(
+  [
+    { $project : { name:{$toUpper:"$_id"} , _id:0 } },
+    { $sort : { name : 1 } }
+  ]
+)
+
+Return Usernames Ordered by Join Month:
+db.users.aggregate(
+  [
+    { $project :
+       {
+         month_joined : { $month : "$joined" },
+         name : "$_id",
+         _id : 0
+       }
+    },
+    { $sort : { month_joined : 1 } }
+  ]
+)
+
+Return Total Number of Joins per Month:
+db.users.aggregate(
+  [
+    { $project : { month_joined : { $month : "$joined" } } } ,
+    {$group: { _id : {month_joined:"$month_joined"} , number : { $sum : 1 }}},
+    { $sort : { "_id.month_joined" : 1 } }
+  ]
+)
+
+Return the Five Most Common "Likes":
+db.users.aggregate(
+  [
+    { $unwind : "$likes" },
+    { $group : { _id : "$likes" , number : { $sum : 1 } } },
+    { $sort : { number : -1 } },
+    { $limit : 5 }
+  ]
+)
+
+Normalized doc:
+db.girlDiapers.insert([
+	{ 
+		"diaper" : ObjectId("607ae683212b25b6b16b20aa"),
+		"price" : 45.2,
+		"quanity" : 10,
+		"sku" : "case"
+	}
+])
+
+Schemas and Relations:
+// patron document
+{
+   _id: "joe",
+   name: "Joe Bookreader"
+}
+
+// address document
+{
+   patron_id: "joe", // reference to patron document
+   street: "123 Fake Street",
+   city: "Faketon",
+   state: "MA",
+   zip: "12345"
+}
+-----------
+{
+   _id: "joe",
+   name: "Joe Bookreader",
+   address: {
+              street: "123 Fake Street",
+              city: "Faketon",
+              state: "MA",
+              zip: "12345"
+            }
+}
+-------------
+Subset pattern:
+{
+  "_id": 1,
+  "title": "The Arrival of a Train",
+  "year": 1896,
+  "runtime": 1,
+  "released": ISODate("01-25-1896"),
+  "poster": "http://ia.media-imdb.com/images/M/MV5BMjEyNDk5MDYzOV5BMl5BanBnXkFtZTgwNjIxMTEwMzE@._V1_SX300.jpg",
+  "plot": "A group of people are standing in a straight line along the platform of a railway station, waiting for a train, which is seen coming at some distance. When the train stops at the platform, ...",
+  "fullplot": "A group of people are standing in a straight line along the platform of a railway station, waiting for a train, which is seen coming at some distance. When the train stops at the platform, the line dissolves. The doors of the railway-cars open, and people on the platform help passengers to get off.",
+  "lastupdated": ISODate("2015-08-15T10:06:53"),
+  "type": "movie",
+  "directors": [ "Auguste Lumière", "Louis Lumière" ],
+  "imdb": {
+    "rating": 7.3,
+    "votes": 5043,
+    "id": 12
+  },
+  "countries": [ "France" ],
+  "genres": [ "Documentary", "Short" ],
+  "tomatoes": {
+    "viewer": {
+      "rating": 3.7,
+      "numReviews": 59
+    },
+    "lastUpdated": ISODate("2020-01-09T00:02:53")
+  }
+}
+----
+// movie collection
+{
+  "_id": 1,
+  "title": "The Arrival of a Train",
+  "year": 1896,
+  "runtime": 1,
+  "released": ISODate("1896-01-25"),
+  "type": "movie",
+  "directors": [ "Auguste Lumière", "Louis Lumière" ],
+  "countries": [ "France" ],
+  "genres": [ "Documentary", "Short" ],
+}
+---
+// movie_details collection
+{
+  "_id": 156,
+  "movie_id": 1, // reference to the movie collection
+  "poster": "http://ia.media-imdb.com/images/M/MV5BMjEyNDk5MDYzOV5BMl5BanBnXkFtZTgwNjIxMTEwMzE@._V1_SX300.jpg",
+  "plot": "A group of people are standing in a straight line along the platform of a railway station, waiting for a train, which is seen coming at some distance. When the train stops at the platform, ...",
+  "fullplot": "A group of people are standing in a straight line along the platform of a railway station, waiting for a train, which is seen coming at some distance. When the train stops at the platform, the line dissolves. The doors of the railway-cars open, and people on the platform help passengers to get off.",
+  "lastupdated": ISODate("2015-08-15T10:06:53"),
+  "imdb": {
+    "rating": 7.3,
+    "votes": 5043,
+    "id": 12
+  },
+  "tomatoes": {
+    "viewer": {
+      "rating": 3.7,
+      "numReviews": 59
+    },
+    "lastUpdated": ISODate("2020-01-29T00:02:53")
+  }
+}
+-------
+One-to-Many Relationships with Embedded Documents:
+Embedded Document Pattern
+// patron document
+{
+   _id: "joe",
+   name: "Joe Bookreader"
+}
+
+// address documents
+{
+   patron_id: "joe", // reference to patron document
+   street: "123 Fake Street",
+   city: "Faketon",
+   state: "MA",
+   zip: "12345"
+}
+
+{
+   patron_id: "joe",
+   street: "1 Some Other Street",
+   city: "Boston",
+   state: "MA",
+   zip: "12345"
+}
+-----
+{
+   "_id": "joe",
+   "name": "Joe Bookreader",
+   "addresses": [
+                {
+                  "street": "123 Fake Street",
+                  "city": "Faketon",
+                  "state": "MA",
+                  "zip": "12345"
+                },
+                {
+                  "street": "1 Some Other Street",
+                  "city": "Boston",
+                  "state": "MA",
+                  "zip": "12345"
+                }
+              ]
+ }
+-----
+Subset Pattern:
+{
+  "_id": 1,
+  "name": "Super Widget",
+  "description": "This is the most useful item in your toolbox.",
+  "price": { "value": NumberDecimal("119.99"), "currency": "USD" },
+  "reviews": [
+    {
+      "review_id": 786,
+      "review_author": "Kristina",
+      "review_text": "This is indeed an amazing widget.",
+      "published_date": ISODate("2019-02-18")
+    },
+    {
+      "review_id": 785,
+      "review_author": "Trina",
+      "review_text": "Nice product. Slow shipping.",
+      "published_date": ISODate("2019-02-17")
+    },
+    ...
+    {
+      "review_id": 1,
+      "review_author": "Hans",
+      "review_text": "Meh, it's okay.",
+      "published_date": ISODate("2017-12-06")
+    }
+  ]
+}
+-----
+// The product collection.
+{
+  "_id": 1,
+  "name": "Super Widget",
+  "description": "This is the most useful item in your toolbox.",
+  "price": { "value": NumberDecimal("119.99"), "currency": "USD" },
+  "reviews": [
+    {
+      "review_id": 786,
+      "review_author": "Kristina",
+      "review_text": "This is indeed an amazing widget.",
+      "published_date": ISODate("2019-02-18")
+    }
+    ...
+    {
+      "review_id": 776,
+      "review_author": "Pablo",
+      "review_text": "Amazing!",
+      "published_date": ISODate("2019-02-16")
+    }
+  ]
+}
+------
+// The review collection.
+{
+  "review_id": 786,
+  "product_id": 1,
+  "review_author": "Kristina",
+  "review_text": "This is indeed an amazing widget.",
+  "published_date": ISODate("2019-02-18")
+}
+{
+  "review_id": 785,
+  "product_id": 1,
+  "review_author": "Trina",
+  "review_text": "Nice product. Slow shipping.",
+  "published_date": ISODate("2019-02-17")
+}
+...
+{
+  "review_id": 1,
+  "product_id": 1,
+  "review_author": "Hans",
+  "review_text": "Meh, it's okay.",
+  "published_date": ISODate("2017-12-06")
+}
+------
+One-to-Many Relationships with Document References:
+Pattern:
+{
+   title: "MongoDB: The Definitive Guide",
+   author: [ "Kristina Chodorow", "Mike Dirolf" ],
+   published_date: ISODate("2010-09-24"),
+   pages: 216,
+   language: "English",
+   publisher: {
+              name: "O'Reilly Media",
+              founded: 1980,
+              location: "CA"
+            }
+}
+
+{
+   title: "50 Tips and Tricks for MongoDB Developer",
+   author: "Kristina Chodorow",
+   published_date: ISODate("2011-05-06"),
+   pages: 68,
+   language: "English",
+   publisher: {
+              name: "O'Reilly Media",
+              founded: 1980,
+              location: "CA"
+            }
+}
+---
+// publisher.
+{
+   name: "O'Reilly Media",
+   founded: 1980,
+   location: "CA",
+   books: [123456789, 234567890, ...]
+}
+
+// books.
+{
+    _id: 123456789,
+    title: "MongoDB: The Definitive Guide",
+    author: [ "Kristina Chodorow", "Mike Dirolf" ],
+    published_date: ISODate("2010-09-24"),
+    pages: 216,
+    language: "English"
+}
+
+{
+   _id: 234567890,
+   title: "50 Tips and Tricks for MongoDB Developer",
+   author: "Kristina Chodorow",
+   published_date: ISODate("2011-05-06"),
+   pages: 68,
+   language: "English"
+}
+----
+// publisher.
+{
+   _id: "oreilly",
+   name: "O'Reilly Media",
+   founded: 1980,
+   location: "CA"
+}
+
+// books.
+{
+   _id: 123456789,
+   title: "MongoDB: The Definitive Guide",
+   author: [ "Kristina Chodorow", "Mike Dirolf" ],
+   published_date: ISODate("2010-09-24"),
+   pages: 216,
+   language: "English",
+   publisher_id: "oreilly"
+}
+
+{
+   _id: 234567890,
+   title: "50 Tips and Tricks for MongoDB Developer",
+   author: "Kristina Chodorow",
+   published_date: ISODate("2011-05-06"),
+   pages: 68,
+   language: "English",
+   publisher_id: "oreilly"
+}
+----
+
+
+
+
+
+
+
