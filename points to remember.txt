@@ -1,0 +1,43 @@
+what kind of DBMS is MongoDb?
+	document based NoSQL (not only SQL)
+	
+In what format does mongodb store data?
+	JSON -> type of data (kV pair)
+	collections == tables
+	
+Vertical Scaling, Horizontal Scaling
+
+What is the purpose of an Index?
+	provicde high-performance retrieval of data (read ops) for frequently used queries.
+	
+What is aggregation?
+	operations that process data and return computed results.
+	
+key features of mongodb?
+	high performance
+	automatic scaling
+	high availability (HA)
+	
+	(rich query language)
+	
+CRUD?
+	create read update delete
+	
+
+namespace
+save()
+replication - provides redundancy and HA of data
+replica set
+
+pretty()
+_id
+	replace any attribute
+	"x": 1
+		replace "y": 1
+	
+how to drop/delete collection?
+how to drop a database?
+db.dropDatabase()
+
+connection string
+transaction management?
